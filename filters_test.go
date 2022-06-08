@@ -4,7 +4,7 @@ import (
 	html "html/template"
 	"testing"
 
-	. "github.com/pseudomuto/protoc-gen-doc"
+	. "github.com/beatlabs/protoc-gen-doc"
 	"github.com/stretchr/testify/require"
 )
 
@@ -47,6 +47,20 @@ func TestNoBrFilter(t *testing.T) {
 
 	for input, output := range tests {
 		require.Equal(t, output, NoBrFilter(input))
+	}
+}
+
+func TestBrMdFilter(t *testing.T) {
+	tests := map[string]string{
+		"My content":                     "My content",
+		"My content \r\nHere.":           "My content Here.",
+		"My\n content\r right\r\n here.": "My content right here.",
+		"My\ncontent\rright\r\nhere.":    "My content right here.",
+		"My content.\n\nMore content.":   "My content.<br><br>More content.",
+	}
+
+	for input, output := range tests {
+		require.Equal(t, html.HTML(output), BrFilterMD(input))
 	}
 }
 
